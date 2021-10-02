@@ -1,14 +1,16 @@
 import express, { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-import { RequestValidationError, BadRequestError } from "../errors";
+import { body } from "express-validator";
+import { BadRequestError } from "../errors";
 import { User } from "../models/user";
+import jwt from 'jsonwebtoken';
+import { validateRequest } from "../middlewares";
 
 const router = express.Router();
 
-const emailValidator = () =>
+export const emailValidator = () =>
   body("email").isEmail().withMessage("Email must be valid");
 
-const passwordValidator = () =>
+export const passwordValidator = () =>
   body("password")
     .trim()
     .isLength({ min: 4, max: 20 })
@@ -17,14 +19,9 @@ const passwordValidator = () =>
 router.post(
   "/api/users/signup",
 
-  [emailValidator(), passwordValidator()],
+  [emailValidator(), passwordValidator(), validateRequest],
 
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      throw new RequestValidationError(errors.array());
-    }
     const { email, password } = req.body;
     const existingUser = await User.findOne({email});
     if(existingUser) {
@@ -32,6 +29,18 @@ router.post(
     }
     const user = User.build({email, password});
     await user.save();
+
+    // generate JWT  
+    const userJWT = jwt.sign({
+      id: user.id,
+      email: user.email,
+    }, process.env.JWT_KEY!
+    );
+    // store it on session object
+    req.session = {
+      jwt: userJWT,
+    }
+
     return res.status(201).send(user);
   }
 );
