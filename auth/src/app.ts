@@ -2,8 +2,7 @@ import express from "express";
 import "express-async-errors";
 import cookieSession from "cookie-session";
 
-import { NotFoundError } from "./errors";
-import { errorHandler } from "./middlewares";
+import { NotFoundError, errorHandler } from "@ticketing-service-library/common";
 import {
   currentUserRouter,
   signinRouter,

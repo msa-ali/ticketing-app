@@ -1,8 +1,7 @@
 import express, { Request, Response } from "express";
-import { validateRequest } from "../middlewares";
+import { validateRequest, BadRequestError } from "@ticketing-service-library/common";
 import { emailValidator, passwordValidator } from "./signup";
 import { User } from "../models/user";
-import { BadRequestError } from "../errors";
 import { Password } from "../services/password";
 import jwt from "jsonwebtoken";
 
