@@ -3,7 +3,7 @@ import "express-async-errors";
 import cookieSession from "cookie-session";
 
 import { NotFoundError, errorHandler, currentUser } from "@ticketing-service-library/common";
-import { createTicketRouter } from "./routes";
+import { createTicketRouter, fetchTicketsRouter, showTicketRouter, updateTicketRouter } from "./routes";
 
 
 const app = express();
@@ -17,8 +17,10 @@ app.use(
 );
 
 app.use(currentUser);
-
 app.use(createTicketRouter);
+app.use(showTicketRouter);
+app.use(fetchTicketsRouter);
+app.use(updateTicketRouter);
 
 app.all("*", () => {
   throw new NotFoundError();
