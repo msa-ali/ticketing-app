@@ -10,11 +10,20 @@ const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error('MONGO_URI MUST BE DEFINED');
   }
+  if (!process.env.NATS_CLIENT_ID) {
+    throw new Error('NATS CLIENT ID MUST BE DEFINED');
+  }
+  if (!process.env.NATS_URL) {
+    throw new Error('NATS URL MUST BE DEFINED');
+  }
+  if (!process.env.NATS_CLUSTER_ID) {
+    throw new Error('NATS Cluster ID MUST BE DEFINED');
+  }
   try {
     await natsWrapper.connect(
-      'ticketing', // id defined in nats-depl file
-      'random',
-      'http://nats-srv:4222',
+      process.env.NATS_CLUSTER_ID,
+      process.env.NATS_CLIENT_ID,
+      process.env.NATS_URL,
     );
     natsWrapper.client.on('close', () => {
       console.log('NATS Connection Close');
@@ -22,7 +31,7 @@ const start = async () => {
     })
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
-    
+
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to mongodb instance...");
   } catch (error) {
