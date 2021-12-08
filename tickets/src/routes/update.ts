@@ -1,7 +1,7 @@
 import { requireAuth, validateRequest, NotFoundError, NotAuthorizedError } from '@ticketing-service-library/common';
 import express, {Request, Response} from 'express';
 import {body} from 'express-validator';
-import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 import { Ticket } from '../models/ticket';
 import { natsWrapper } from '../nats-wrapper';
 
@@ -37,7 +37,7 @@ router.put(
         price: req.body.price
     });
     await ticket.save();
-    new TicketCreatedPublisher(natsWrapper.client).publish({
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
         id: ticket.id,
         title: ticket.title,
         price: ticket.price,
