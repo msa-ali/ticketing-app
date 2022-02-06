@@ -4,6 +4,8 @@ import { body } from "express-validator";
 import mongoose from "mongoose";
 import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
+import { OrderCreatedPublisher } from "../events/publishers/order-created-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -21,12 +23,12 @@ router.post('/api/orders', requireAuth, [
     // Find the ticket the user is trying to order in the database
     const ticket = await Ticket.findById(ticketId);
 
-    if(!ticket) {
+    if (!ticket) {
         throw new NotFoundError();
     }
     // Make sure that this ticket is not already reserved
     const isReserved = await ticket.isReserved();
-    if(isReserved) {
+    if (isReserved) {
         throw new BadRequestError('Ticket is already reserved');
     }
     // Calculate an expiration date for this order
@@ -43,7 +45,18 @@ router.post('/api/orders', requireAuth, [
     await order.save();
 
     // Publish an event saying that an order was created
-    
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+        id: order.id,
+        status: order.status,
+        userId: order.userId,
+        expiresAt: order.expiresAt.toISOString(),
+        ticket: {
+            id: ticket.id,
+            price: ticket.price,
+        }
+    })
+
+
     res.status(201).send(order);
 });
 
