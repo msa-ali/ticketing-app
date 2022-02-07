@@ -35,8 +35,14 @@ We are creating a separate services to manage each type of resource. Should we d
 - Payment service needs to know there is a new order that a user might submit a payment for
 - Expiration service needs to start a 15 minute timer to eventually time out this order
   
-
 2. ORDER:CANCELLED
 
 - Ticket service should unreserve a ticket if the corresponding order has been cancelled so this ticket can be edited again
 - Payments should know that any incoming payments for this order should be rejected.
+
+### Ticket Service
+
+1. TICKER:CREATED / TICKET:UPDATED
+
+- Orders needs to know the valid tickets that can be purchased
+- Orders needs to know the price of each ticket
