@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { OrderStatus } from '@ticketing-service-library/common';
-import { TicketDoc } from './ticket'
+import { TicketDoc } from './ticket';
 
 export { OrderStatus };
 interface OrderAttrs {
@@ -12,6 +12,7 @@ interface OrderAttrs {
 
 interface OrderDoc extends mongoose.Document {
     userId: string;
+    version: number;
     status: OrderStatus;
     expiresAt: Date;
     ticket: TicketDoc;

@@ -46,3 +46,9 @@ We are creating a separate services to manage each type of resource. Should we d
 
 - Orders needs to know the valid tickets that can be purchased
 - Orders needs to know the price of each ticket
+
+### Question.
+
+When should we increment or include the 'version' number of a record with an event?
+
+Increment/Include the 'version' number whenever the primary service responsible for a record emits an event to describe a create/update/destroy to a record.
