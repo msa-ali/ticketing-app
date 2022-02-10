@@ -32,3 +32,11 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    - image: altamashali/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
