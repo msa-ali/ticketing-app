@@ -52,3 +52,5 @@ We are creating a separate services to manage each type of resource. Should we d
 When should we increment or include the 'version' number of a record with an event?
 
 Increment/Include the 'version' number whenever the primary service responsible for a record emits an event to describe a create/update/destroy to a record.
+
+kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=<YOUR_SECRET>
